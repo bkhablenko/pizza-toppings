@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  app:
+    image: github.com/bkhablenko/pizza-toppings:${CIRCLE_SHA1:-latest}
+    build:
+      context: .
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://jaeger:4317
+    ports:
+      - "8080:8080"
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.44.0
+    environment:
+      COLLECTOR_OTLP_ENABLED: true
+    ports:
+      - "4317:4317"
+      - "16686:16686"
