@@ -18,3 +18,16 @@ services:
     ports:
       - "4317:4317"
       - "16686:16686"
+
+  # https://github.com/Redocly/redoc
+  redoc:
+    image: redocly/redoc:v2.0.0
+    environment:
+      SPEC_URL: openapi.yaml
+      REDOC_OPTIONS: >-
+        expand-responses="200"
+        json-sample-expand-level="3"
+    volumes:
+      - ./openapi.yaml:/usr/share/nginx/html/openapi.yaml
+    ports:
+      - "8090:80"
