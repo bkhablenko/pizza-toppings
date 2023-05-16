@@ -9,6 +9,8 @@ servers:
 tags:
   - name: Preferences
     description: User-submitted preferences.
+  - name: Miscellaneous
+    description: Endpoints that do not fall into any other category.
 
 paths:
   /user/preferences:
@@ -66,6 +68,26 @@ paths:
           description: Bad Request
         default:
           $ref: '#/components/responses/ErrorResponse'
+
+  /toppings/popular:
+    get:
+      summary: Get popular toppings
+      description: |
+        Retrieve pizza toppings and the number of users who prefer each topping.
+      tags:
+        - Miscellaneous
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+                example:
+                  mozzarella: 90
+                  pepperoni: 150
 
 components:
   securitySchemes:
