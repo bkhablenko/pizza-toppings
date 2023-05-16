@@ -2,16 +2,17 @@ package com.github.bkhablenko.service
 
 import com.github.bkhablenko.domain.model.UserPreferencesEntity
 import com.github.bkhablenko.domain.repository.UserPreferencesRepository
-import com.github.bkhablenko.mockito.getArgument
+import com.github.bkhablenko.service.model.UserPreferences
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.sameInstance
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doAnswer
+import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @DisplayName("DefaultUserPreferencesService")
@@ -25,30 +26,58 @@ class DefaultUserPreferencesServiceTest {
 
     private val userPreferencesService = DefaultUserPreferencesService(userPreferencesRepository)
 
-    @DisplayName("getByEmail")
+    @DisplayName("findByEmail")
     @Nested
-    inner class GetByEmailTest {
+    inner class FindByEmailTest {
 
         @Test
-        fun `should return found UserPreferencesEntity`() {
-            val expectedEntity = UserPreferencesEntity(TEST_EMAIL)
-            whenever(userPreferencesRepository.findByEmail(TEST_EMAIL)) doReturn expectedEntity
+        fun `should return found values`() {
+            val entity = UserPreferencesEntity(email = TEST_EMAIL, toppings = setOf("mozzarella", "pepperoni"))
+            whenever(userPreferencesRepository.findByEmail(TEST_EMAIL)) doReturn entity
 
-            val result = userPreferencesService.getByEmail(TEST_EMAIL)
-            assertThat(result, equalTo(expectedEntity))
+            val expectedValues = UserPreferences(toppings = entity.toppings)
+            assertThat(userPreferencesService.findByEmail(TEST_EMAIL), equalTo(expectedValues))
         }
 
         @Test
-        fun `should save new UserPreferencesEntity if not found`() {
-            val expectedEntity = UserPreferencesEntity(TEST_EMAIL)
-
+        fun `should return default values if not found`() {
             whenever(userPreferencesRepository.findByEmail(TEST_EMAIL)) doReturn null
-            whenever(userPreferencesRepository.save(any())) doAnswer getArgument<UserPreferencesEntity>(0)
 
-            with(userPreferencesService.getByEmail(TEST_EMAIL)) {
-                assertThat(email, equalTo(expectedEntity.email))
-                assertThat(toppings, equalTo(expectedEntity.toppings))
-            }
+            val expectedValues = UserPreferences()
+            assertThat(userPreferencesService.findByEmail(TEST_EMAIL), equalTo(expectedValues))
+        }
+    }
+
+    @DisplayName("update")
+    @Nested
+    inner class UpdateTest {
+
+        @Test
+        fun `should update existing entity if found`() {
+            val entity = UserPreferencesEntity(email = TEST_EMAIL, toppings = setOf("mozzarella"))
+            whenever(userPreferencesRepository.findByEmail(TEST_EMAIL)) doReturn entity
+
+            val userPreferences = UserPreferences(toppings = setOf("pepperoni"))
+            userPreferencesService.update(TEST_EMAIL, userPreferences)
+
+            verify(userPreferencesRepository).save(check {
+                assertThat(it, sameInstance(entity))
+                assertThat(it.email, equalTo(TEST_EMAIL))
+                assertThat(it.toppings, equalTo(userPreferences.toppings))
+            })
+        }
+
+        @Test
+        fun `should persist new entity if not found`() {
+            whenever(userPreferencesRepository.findByEmail(TEST_EMAIL)) doReturn null
+
+            val userPreferences = UserPreferences(toppings = setOf("pepperoni"))
+            userPreferencesService.update(TEST_EMAIL, userPreferences)
+
+            verify(userPreferencesRepository).save(check {
+                assertThat(it.email, equalTo(TEST_EMAIL))
+                assertThat(it.toppings, equalTo(userPreferences.toppings))
+            })
         }
     }
 }

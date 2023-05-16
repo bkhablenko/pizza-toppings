@@ -22,13 +22,13 @@ class UserPreferencesController(private val userPreferencesService: UserPreferen
 
     @GetMapping
     fun getPreferences(@AuthenticationPrincipal user: User): GetPreferencesResponse {
-        val userPreferences = userPreferencesService.getByEmail(user.username)
-
+        val userPreferences = userPreferencesService.findByEmail(user.username)
         return GetPreferencesResponse.of(userPreferences)
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun updatePreferences(@AuthenticationPrincipal user: User, @RequestBody @Valid payload: UpdatePreferencesRequest) {
+        userPreferencesService.update(user.username, payload.toUserPreferences())
     }
 }

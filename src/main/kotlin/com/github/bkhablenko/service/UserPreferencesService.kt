@@ -1,8 +1,10 @@
 package com.github.bkhablenko.service
 
-import com.github.bkhablenko.domain.model.UserPreferencesEntity
+import com.github.bkhablenko.service.model.UserPreferences
 
 interface UserPreferencesService {
 
-    fun getByEmail(email: String): UserPreferencesEntity
+    fun findByEmail(email: String): UserPreferences
+
+    fun update(email: String, userPreferences: UserPreferences)
 }
