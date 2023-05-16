@@ -38,12 +38,14 @@ dependencies {
 }
 
 tasks {
+    clean {
+        doLast {
+            project.delete("postgresql")
+        }
+    }
     compileKotlin {
         kotlinOptions {
-            freeCompilerArgs = listOf(
-                "-Xemit-jvm-type-annotations",
-                "-Xjsr305=strict",
-            )
+            freeCompilerArgs = listOf("-Xemit-jvm-type-annotations", "-Xjsr305=strict")
             jvmTarget = "17"
         }
     }
