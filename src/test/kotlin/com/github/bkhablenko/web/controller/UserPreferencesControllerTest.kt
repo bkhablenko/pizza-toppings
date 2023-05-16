@@ -3,6 +3,8 @@ package com.github.bkhablenko.web.controller
 import com.github.bkhablenko.service.UserPreferencesService
 import com.github.bkhablenko.service.model.UserPreferences
 import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.emptyString
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -57,6 +59,9 @@ class UserPreferencesControllerTest {
         fun `should respond with 401 Unauthorized on missing Authorization header`() {
             getPreferences().andExpect {
                 status { isUnauthorized() }
+                content {
+                    bytes(ByteArray(0))
+                }
             }
             verifyNoInteractions(userPreferencesService)
         }
@@ -96,6 +101,10 @@ class UserPreferencesControllerTest {
 
             updatePreferences(payload).andExpect {
                 status { isBadRequest() }
+                jsonPath("$.status", equalTo(400))
+                jsonPath("$.error", equalTo("Bad Request"))
+                jsonPath("$.message", emptyString())
+                jsonPath("$.path", equalTo("/api/v1/user/preferences"))
             }
             verifyNoInteractions(userPreferencesService)
         }
@@ -106,6 +115,9 @@ class UserPreferencesControllerTest {
 
             updatePreferences(payload).andExpect {
                 status { isUnauthorized() }
+                content {
+                    bytes(ByteArray(0))
+                }
             }
             verifyNoInteractions(userPreferencesService)
         }
