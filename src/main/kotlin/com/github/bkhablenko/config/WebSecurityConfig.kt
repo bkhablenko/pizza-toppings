@@ -36,6 +36,7 @@ class WebSecurityConfig : WebMvcConfigurer {
         return httpSecurity.build()
     }
 
+    // Authenticate all users with an empty password. For demonstration purposes only
     @Bean
     fun userDetailsService() = UserDetailsService { username -> User(username, NOOP_PASSWORD_PREFIX, emptyList()) }
 }
