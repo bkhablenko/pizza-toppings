@@ -1,7 +1,9 @@
 package com.github.bkhablenko.service
 
+import com.github.bkhablenko.component.ToppingNormalizer
 import com.github.bkhablenko.domain.model.UserPreferencesEntity
 import com.github.bkhablenko.domain.repository.UserPreferencesRepository
+import com.github.bkhablenko.mockito.getArgument
 import com.github.bkhablenko.service.model.UserPreferences
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -9,7 +11,10 @@ import org.hamcrest.Matchers.sameInstance
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.check
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -24,7 +29,12 @@ class DefaultUserPreferencesServiceTest {
 
     private val userPreferencesRepository = mock<UserPreferencesRepository>()
 
-    private val userPreferencesService = DefaultUserPreferencesService(userPreferencesRepository)
+    private val toppingNormalizer = mock<ToppingNormalizer> {
+        // Return the same value
+        on { normalizeTopping(any()) } doAnswer getArgument<String>(0)
+    }
+
+    private val userPreferencesService = DefaultUserPreferencesService(userPreferencesRepository, toppingNormalizer)
 
     @DisplayName("findByEmail")
     @Nested
@@ -77,6 +87,22 @@ class DefaultUserPreferencesServiceTest {
             verify(userPreferencesRepository).save(check {
                 assertThat(it.email, equalTo(TEST_EMAIL))
                 assertThat(it.toppings, equalTo(userPreferences.toppings))
+            })
+        }
+
+        @Test
+        fun `should normalize topping names`() {
+            // "Normalize" by prepending a prefix
+            val prefix = "normalized"
+            whenever(toppingNormalizer.normalizeTopping(any())) doAnswer { "$prefix:${it.arguments[0] as String}" }
+
+            val userPreferences = UserPreferences(toppings = setOf("MoZZareLLa", " pepperoni \t"))
+            userPreferencesService.update(TEST_EMAIL, userPreferences)
+
+            verify(userPreferencesRepository).save(argThat {
+                toppings.all {
+                    it.startsWith("normalized")
+                }
             })
         }
     }
