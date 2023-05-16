@@ -94,6 +94,7 @@ curl -i 'localhost:8080/api/v1/toppings/popular'
 ## Missing features
 
 - [ ] Authorize endpoint access with OAuth 2
+- [ ] Include trace ID as a response header
 - [ ] Build the app and run tests with Docker Compose
 - [ ] Implement an end-to-end test suite
 
