@@ -69,7 +69,7 @@ paths:
         default:
           $ref: '#/components/responses/ErrorResponse'
 
-  /toppings/popular:
+  /popular/toppings:
     get:
       summary: Get popular toppings
       description: |
