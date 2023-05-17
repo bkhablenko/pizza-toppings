@@ -21,7 +21,7 @@ class PopularToppingControllerTest {
     @MockBean
     private lateinit var popularToppingService: PopularToppingService
 
-    @DisplayName("GET /api/v1/toppings/popular")
+    @DisplayName("GET /api/v1/popular/toppings")
     @Nested
     inner class GetPopularToppingsTest {
 
@@ -43,7 +43,7 @@ class PopularToppingControllerTest {
 
         private fun getPopularToppings() =
             mockMvc
-                .get("/api/v1/toppings/popular")
+                .get("/api/v1/popular/toppings")
                 .andDo { print() }
     }
 }

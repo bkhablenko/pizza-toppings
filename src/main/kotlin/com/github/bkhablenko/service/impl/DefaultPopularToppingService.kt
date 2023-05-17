@@ -1,6 +1,7 @@
-package com.github.bkhablenko.service
+package com.github.bkhablenko.service.impl
 
 import com.github.bkhablenko.domain.repository.UserPreferencesRepository
+import com.github.bkhablenko.service.PopularToppingService
 import org.springframework.stereotype.Service
 
 @Service

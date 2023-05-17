@@ -1,4 +1,4 @@
-package com.github.bkhablenko.service
+package com.github.bkhablenko.service.impl
 
 import com.github.bkhablenko.domain.repository.UserPreferencesRepository
 import com.github.bkhablenko.domain.view.ToppingAndEmailsCount

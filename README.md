@@ -77,7 +77,7 @@ curl -i 'localhost:8080/api/v1/user/preferences' \
 ### Get popular toppings
 
 ```bash
-curl -i 'localhost:8080/api/v1/toppings/popular'
+curl -i 'localhost:8080/api/v1/popular/toppings'
 ```
 
 ## Additional features

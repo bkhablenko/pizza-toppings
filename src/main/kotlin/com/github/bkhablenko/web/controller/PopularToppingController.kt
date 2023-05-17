@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/toppings/popular")
+@RequestMapping("/api/v1/popular/toppings")
 class PopularToppingController(private val popularToppingService: PopularToppingService) {
 
     @GetMapping

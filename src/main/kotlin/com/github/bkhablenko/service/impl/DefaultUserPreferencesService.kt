@@ -1,8 +1,9 @@
-package com.github.bkhablenko.service
+package com.github.bkhablenko.service.impl
 
 import com.github.bkhablenko.component.ToppingNormalizer
 import com.github.bkhablenko.domain.model.UserPreferencesEntity
 import com.github.bkhablenko.domain.repository.UserPreferencesRepository
+import com.github.bkhablenko.service.UserPreferencesService
 import com.github.bkhablenko.service.model.UserPreferences
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +20,12 @@ class DefaultUserPreferencesService(
     }
 
     override fun findByEmail(email: String): UserPreferences {
-        return userPreferencesRepository.findByEmail(email)?.toUserPreferences() ?: DEFAULT_VALUES
+        val entity = userPreferencesRepository.findByEmail(email)
+        return if (entity != null) {
+            with(entity) {
+                UserPreferences(toppings = toppings)
+            }
+        } else DEFAULT_VALUES
     }
 
     override fun update(email: String, userPreferences: UserPreferences) {
@@ -29,8 +35,6 @@ class DefaultUserPreferencesService(
         }
         userPreferencesRepository.save(entity)
     }
-
-    private fun UserPreferencesEntity.toUserPreferences() = UserPreferences(toppings = toppings)
 
     private fun normalizeToppings(toppings: Set<String>) =
         toppings.map { toppingNormalizer.normalizeTopping(it) }.toSet()

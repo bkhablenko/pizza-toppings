@@ -1,4 +1,4 @@
-package com.github.bkhablenko.service
+package com.github.bkhablenko.service.impl
 
 import com.github.bkhablenko.component.ToppingNormalizer
 import com.github.bkhablenko.domain.model.UserPreferencesEntity

@@ -10,10 +10,10 @@ import org.hibernate.annotations.NaturalId
 class UserPreferencesEntity(
 
     @NaturalId
-    @Column(name = "email")
+    @Column
     var email: String,
 
-    @Column(name = "toppings")
+    @Column
     var toppings: Set<String> = emptySet()
 
 ) : AuditedEntity()

@@ -48,30 +48,43 @@ class RestExceptionHandler {
         NoHandlerFoundException::class,
         AsyncRequestTimeoutException::class,
         ErrorResponseException::class,
-        ConversionNotSupportedException::class,
-        TypeMismatchException::class,
-        HttpMessageNotReadableException::class,
-        HttpMessageNotWritableException::class,
-        BindException::class,
-
-        // Everything else as well
-        Exception::class,
     )
-    fun handleException(request: HttpServletRequest, exception: Exception): ErrorResponseEntity =
-        when (exception) {
-            is org.springframework.web.ErrorResponse -> {
-                val statusCode = exception.statusCode.value()
-                errorResponseOf(request, HttpStatus.valueOf(statusCode))
-            }
+    fun handleErrorResponse(request: HttpServletRequest, exception: Exception): ErrorResponseEntity {
+        exception as org.springframework.web.ErrorResponse
 
-            is ConversionNotSupportedException -> errorResponseOf(request, INTERNAL_SERVER_ERROR)
-            is TypeMismatchException -> errorResponseOf(request, BAD_REQUEST)
-            is HttpMessageNotReadableException -> errorResponseOf(request, BAD_REQUEST)
-            is HttpMessageNotWritableException -> errorResponseOf(request, INTERNAL_SERVER_ERROR)
-            is BindException -> errorResponseOf(request, BAD_REQUEST)
+        val statusCode = exception.statusCode.value()
+        return errorResponseOf(request, HttpStatus.valueOf(statusCode))
+    }
 
-            else -> errorResponseOf(request, INTERNAL_SERVER_ERROR, "Something went awfully wrong.")
-        }
+    @ExceptionHandler(ConversionNotSupportedException::class)
+    fun handleConversionNotSupportedException(request: HttpServletRequest): ErrorResponseEntity {
+        return errorResponseOf(request, INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(TypeMismatchException::class)
+    fun handleTypeMismatchException(request: HttpServletRequest): ErrorResponseEntity {
+        return errorResponseOf(request, BAD_REQUEST)
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException::class)
+    fun handleHttpMessageNotReadableException(request: HttpServletRequest): ErrorResponseEntity {
+        return errorResponseOf(request, BAD_REQUEST)
+    }
+
+    @ExceptionHandler(HttpMessageNotWritableException::class)
+    fun handleHttpMessageNotWritableException(request: HttpServletRequest): ErrorResponseEntity {
+        return errorResponseOf(request, INTERNAL_SERVER_ERROR)
+    }
+
+    @ExceptionHandler(BindException::class)
+    fun handleBindException(request: HttpServletRequest): ErrorResponseEntity {
+        return errorResponseOf(request, BAD_REQUEST)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleException(request: HttpServletRequest, exception: Exception): ErrorResponseEntity {
+        return errorResponseOf(request, INTERNAL_SERVER_ERROR, "Something went awfully wrong.")
+    }
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDeniedException(exception: AccessDeniedException) {
