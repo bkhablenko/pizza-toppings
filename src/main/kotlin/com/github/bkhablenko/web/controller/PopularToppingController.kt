@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController
 class PopularToppingController(private val popularToppingService: PopularToppingService) {
 
     @GetMapping
-    fun getPopularToppings(): Map<String, Int> {
-        return popularToppingService.countDistinctEmailsByTopping()
-    }
+    fun getPopularToppings(): Map<String, Int> =
+        popularToppingService.countDistinctEmailsByTopping()
 }

@@ -15,17 +15,13 @@ class DefaultUserPreferencesService(
     private val toppingNormalizer: ToppingNormalizer,
 ) : UserPreferencesService {
 
-    companion object {
-        private val DEFAULT_VALUES = UserPreferences()
-    }
-
     override fun findByEmail(email: String): UserPreferences {
         val entity = userPreferencesRepository.findByEmail(email)
         return if (entity != null) {
             with(entity) {
                 UserPreferences(toppings = toppings)
             }
-        } else DEFAULT_VALUES
+        } else UserPreferences()
     }
 
     override fun update(email: String, userPreferences: UserPreferences) {

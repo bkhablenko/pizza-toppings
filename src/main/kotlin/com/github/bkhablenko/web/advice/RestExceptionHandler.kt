@@ -49,7 +49,7 @@ class RestExceptionHandler {
         AsyncRequestTimeoutException::class,
         ErrorResponseException::class,
     )
-    fun handleErrorResponse(request: HttpServletRequest, exception: Exception): ErrorResponseEntity {
+    fun handleErrorResponse(request: HttpServletRequest, exception: Exception): ResponseEntity<ErrorResponse> {
         exception as org.springframework.web.ErrorResponse
 
         val statusCode = exception.statusCode.value()
@@ -57,34 +57,29 @@ class RestExceptionHandler {
     }
 
     @ExceptionHandler(ConversionNotSupportedException::class)
-    fun handleConversionNotSupportedException(request: HttpServletRequest): ErrorResponseEntity {
-        return errorResponseOf(request, INTERNAL_SERVER_ERROR)
-    }
+    fun handleConversionNotSupportedException(request: HttpServletRequest) =
+        errorResponseOf(request, INTERNAL_SERVER_ERROR)
 
     @ExceptionHandler(TypeMismatchException::class)
-    fun handleTypeMismatchException(request: HttpServletRequest): ErrorResponseEntity {
-        return errorResponseOf(request, BAD_REQUEST)
-    }
+    fun handleTypeMismatchException(request: HttpServletRequest) =
+        errorResponseOf(request, BAD_REQUEST)
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleHttpMessageNotReadableException(request: HttpServletRequest): ErrorResponseEntity {
-        return errorResponseOf(request, BAD_REQUEST)
-    }
+    fun handleHttpMessageNotReadableException(request: HttpServletRequest) =
+        errorResponseOf(request, BAD_REQUEST)
 
     @ExceptionHandler(HttpMessageNotWritableException::class)
-    fun handleHttpMessageNotWritableException(request: HttpServletRequest): ErrorResponseEntity {
-        return errorResponseOf(request, INTERNAL_SERVER_ERROR)
-    }
+    fun handleHttpMessageNotWritableException(request: HttpServletRequest) =
+        errorResponseOf(request, INTERNAL_SERVER_ERROR)
 
     @ExceptionHandler(BindException::class)
-    fun handleBindException(request: HttpServletRequest): ErrorResponseEntity {
-        return errorResponseOf(request, BAD_REQUEST)
-    }
+    fun handleBindException(request: HttpServletRequest) =
+        errorResponseOf(request, BAD_REQUEST)
 
+    // Everything else
     @ExceptionHandler(Exception::class)
-    fun handleException(request: HttpServletRequest, exception: Exception): ErrorResponseEntity {
-        return errorResponseOf(request, INTERNAL_SERVER_ERROR, "Something went awfully wrong.")
-    }
+    fun handleException(request: HttpServletRequest, exception: Exception) =
+        errorResponseOf(request, INTERNAL_SERVER_ERROR, "Something went awfully wrong.")
 
     @ExceptionHandler(AccessDeniedException::class)
     fun handleAccessDeniedException(exception: AccessDeniedException) {
@@ -103,5 +98,3 @@ class RestExceptionHandler {
             )
         )
 }
-
-typealias ErrorResponseEntity = ResponseEntity<ErrorResponse>

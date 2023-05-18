@@ -28,7 +28,11 @@ class UserPreferencesController(private val userPreferencesService: UserPreferen
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    fun updatePreferences(@AuthenticationPrincipal user: User, @RequestBody @Valid payload: UpdatePreferencesRequest) {
-        userPreferencesService.update(user.username, payload.toUserPreferences())
+    fun updatePreferences(
+        @AuthenticationPrincipal user: User,
+        @RequestBody @Valid payload: UpdatePreferencesRequest,
+    ) {
+        val userPreferences = payload.toUserPreferences()
+        userPreferencesService.update(user.username, userPreferences)
     }
 }
